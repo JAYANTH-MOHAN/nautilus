@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: jayanth-sample-pod2
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: nvidia.com/gpu.product
+            operator: In
+            values:
+            - Quadro-RTX-8000
+  containers:
+  - name: gpu-container
+    image: gitlab-registry.nrp-nautilus.io/zihaozhou/nautilus_tutorial:jupyterhub
+    command: ["jupyter", "lab", "--NotebookApp.token=627a7b3b"]
+    volumeMounts:
+    - mountPath: /tutorial
+      name: jayanth-llama-volume
+    resources:
+      limits:
+        cpu: "16"
+        ephemeral-storage: 1000Gi
+        memory: 32Gi
+        nvidia.com/gpu: "1"
+      requests:
+        cpu: "8"
+        ephemeral-storage: 100Gi
+        memory: 16Gi
+        nvidia.com/gpu: "1"
+  restartPolicy: Never
+  volumes:
+    - name: jayanth-llama-volume
+      persistentVolumeClaim:
+        claimName: jayanth-llama-volume
+
