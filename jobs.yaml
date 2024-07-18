@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: phikpp
+spec:
+  template:
+    spec:
+      volumes:
+      - name: jayanth-llama-volume
+        persistentVolumeClaim:
+          claimName: jayanth-llama-volume
+          # Add the namespace if the PVC is in a different namespace
+          # namespace: dl4nlpspace
+      containers:
+      - name: demo
+        image: gitlab-registry.nrp-nautilus.io/zihaozhou/nautilus_tutorial:jupyterhub
+        command:
+        - "/bin/bash"
+        - "-c"
+        args:
+        - |
+          git clone https://github.com/JAYANTH-MOHAN/kgc.git &&
+          cd kgc &&
+          pip install accelerate vllm transformers datasets nltk > /dev/null &&
+          conda install -c conda-forge nccl -y > /dev/null &&
+          python phikp20kkpp.py
+        resources:                                                                                    
+          limits:
+            cpu: "8"
+            memory: 32Gi
+            nvidia.com/rtxa6000: "2"
+            ephemeral-storage: 100Gi 
+          requests:
+            cpu: "4"
+            memory: 32Gi
+            nvidia.com/rtxa6000: "2"
+            ephemeral-storage: 100Gi
+        volumeMounts:
+        - name: jayanth-llama-volume
+          mountPath: /mnt/jayanth-llama-volume
+      restartPolicy: Never
+  backoffLimit: 1
+
