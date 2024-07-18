@@ -1,12 +1,12 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: phikpp
+  name: job1
 spec:
   template:
     spec:
       volumes:
-      - name: jayanth-llama-volume
+      - name: jayanth-llama-volume 
         persistentVolumeClaim:
           claimName: jayanth-llama-volume
           # Add the namespace if the PVC is in a different namespace
@@ -19,25 +19,24 @@ spec:
         - "-c"
         args:
         - |
-          git clone https://github.com/JAYANTH-MOHAN/kgc.git &&
-          cd kgc &&
-          pip install accelerate vllm transformers datasets nltk > /dev/null &&
+          git clone https://github.com/JAYANTH-MOHAN/nautilus.git &&
+          cd nautilus &&
+          pip install accelerate transformers datasets nltk vllm==0.4.3 > /dev/null &&
           conda install -c conda-forge nccl -y > /dev/null &&
-          python phikp20kkpp.py
+          python app.py
         resources:                                                                                    
           limits:
             cpu: "8"
             memory: 32Gi
-            nvidia.com/rtxa6000: "2"
+            nvidia.com/rtxa6000: "1"
             ephemeral-storage: 100Gi 
           requests:
             cpu: "4"
             memory: 32Gi
-            nvidia.com/rtxa6000: "2"
+            nvidia.com/rtxa6000: "1"
             ephemeral-storage: 100Gi
         volumeMounts:
         - name: jayanth-llama-volume
           mountPath: /mnt/jayanth-llama-volume
       restartPolicy: Never
   backoffLimit: 1
-
